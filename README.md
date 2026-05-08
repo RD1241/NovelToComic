@@ -259,7 +259,7 @@ uvicorn api.main:app --host 0.0.0.0 --port 8000
 The project can also be pulled directly from Docker Hub.
 
 ```bash
-docker pull rd1241/noveltocomic
+docker pull ramanduggal/noveltocomic
 ```
 
 Run using:
