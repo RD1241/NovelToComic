@@ -314,8 +314,14 @@ class SDGenerator:
         self._is_sdxl           = False
         # Always restore controlnet flag from master setting on unload
         self.controlnet_enabled = self._controlnet_setting
+        
+        # Explicit garbage collection to prevent VRAM hoarding
+        import gc
+        gc.collect()
+        
         if self.device == "cuda":
             torch.cuda.empty_cache()
+            torch.cuda.ipc_collect()
 
     # ------------------------------------------------------------------
     # IP-Adapter
