@@ -94,9 +94,9 @@ The project focuses on:
 
 <br/><br/>
 
-## 🚀 Single Panel
+## 🚀 Cinematic / Sci-Fi Style
 
-<img src="assets/sample_outputs/realistic_style_example.png" width="45%"/>
+<img src="assets/sample_outputs/Cinematic.png" width="45%"/>
 
 <br/><br/>
 
