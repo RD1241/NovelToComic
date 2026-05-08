@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/sample_outputs/banner.png" alt="NovelToComic Banner" width="100%"/>
+<img src="assets/sample_outputs/Banner.png" alt="NovelToComic Banner" width="100%"/>
 
 <br/>
 
@@ -66,7 +66,7 @@ The project focuses on:
 
 <div align="center">
 
-<img src="assets/sample_outputs/ui_screenshot.png" width="95%"/>
+<img src="assets/sample_outputs/Screenshot 2026-05-08 010104.png" width="95%"/>
 
 </div>
 
@@ -78,31 +78,31 @@ The project focuses on:
 
 ## ⚔️ Manga Style Comic Generation
 
-<img src="assets/sample_outputs/manga_output.png" width="85%"/>
+<img src="assets/sample_outputs/Screenshot 2026-05-08 145026.png" width="85%"/>
 
 <br/><br/>
 
 ## 🎨 Manhwa Style Comic Generation
 
-<img src="assets/sample_outputs/manhwa_output.png" width="85%"/>
+<img src="assets/sample_outputs/Screenshot 2026-05-08 145337.png" width="85%"/>
 
 <br/><br/>
 
 ## 🌲 Anime Style — Single Panel Scene
 
-<img src="assets/sample_outputs/anime_single.png" width="45%"/>
+<img src="assets/sample_outputs/anime_style_example.png" width="45%"/>
 
 <br/><br/>
 
-## 🚀 Cinematic / Sci-Fi Style
+## 🚀 Single Panel
 
-<img src="assets/sample_outputs/cinematic_single.png" width="45%"/>
+<img src="assets/sample_outputs/realistic_style_example.png" width="45%"/>
 
 <br/><br/>
 
 ## 🎬 Realistic Cinematic Storytelling
 
-<img src="assets/sample_outputs/realistic_output.png" width="85%"/>
+<img src="assets/sample_outputs/final_comic_page.png" width="85%"/>
 
 </div>
 
