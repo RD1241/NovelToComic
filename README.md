@@ -66,7 +66,7 @@ The project focuses on:
 
 <div align="center">
 
-<img src="assets/sample_outputs/Screenshot 2026-05-08 010104.png" width="95%"/>
+<img src="assets/sample_outputs/UI.png" width="95%"/>
 
 </div>
 
@@ -78,13 +78,13 @@ The project focuses on:
 
 ## ⚔️ Manga Style Comic Generation
 
-<img src="assets/sample_outputs/Screenshot 2026-05-08 145026.png" width="85%"/>
+<img src="assets/sample_outputs/Manga.png" width="85%"/>
 
 <br/><br/>
 
 ## 🎨 Manhwa Style Comic Generation
 
-<img src="assets/sample_outputs/Screenshot 2026-05-08 145337.png" width="85%"/>
+<img src="assets/sample_outputs/Manhwa.png" width="85%"/>
 
 <br/><br/>
 
