@@ -1,0 +1,10 @@
+venv/
+.cache/
+outputs/
+models/
+*.db
+__pycache__/
+*.log
+.env
+.idea/
+.vscode/

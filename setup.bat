@@ -1,0 +1,3 @@
+@echo off
+echo Starting NovelToComic Setup and Deployment...
+docker compose up --build
