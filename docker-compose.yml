@@ -1,0 +1,12 @@
+services:
+  noveltocomic:
+    build: .
+    container_name: noveltocomic
+    ports:
+      - "8000:8000"
+    environment:
+      - DEVICE=cuda
+    volumes:
+      - ./outputs:/app/outputs
+      - ./models:/app/models
+    restart: unless-stopped

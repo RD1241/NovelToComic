@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+pydantic
+streamlit
+diffusers
+transformers
+accelerate
+xformers
+torch
+torchvision
+pillow
+opencv-python
+ollama
+python-multipart
+controlnet-aux>=0.0.7

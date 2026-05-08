@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novel to Comic Studio</title>
+    <meta name="description" content="Convert your novel text into AI-generated comics with dynamic panel counts and multiple art styles — 100% free and local.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="glass-panel">
+            <h1>Novel <span>to</span> Comic</h1>
+            <p>100% Free Local AI Pipeline</p>
+        </header>
+
+        <main>
+            <section class="input-section glass-panel">
+                <h2>1. Enter Novel Text</h2>
+                <textarea id="novel-input" placeholder="Paste a chapter or scene from your novel here... (min 20 characters)" maxlength="3000"></textarea>
+                <div id="char-counter" class="char-counter">0 / 3000</div>
+                <div class="style-selector">
+                    <label for="style-select">Art Style</label>
+                    <select id="style-select">
+                        <option value="">Auto-detect</option>
+                        <option value="anime">Anime</option>
+                        <option value="manga">Manga</option>
+                        <option value="manhwa">Manhwa</option>
+                        <option value="realistic">Realistic</option>
+                        <option value="cinematic">Cinematic</option>
+                    </select>
+                </div>
+                <button id="generate-btn" class="glow-button">Generate Comic</button>
+
+                <!-- Error Banner -->
+                <div id="error-banner" class="error-banner hidden">
+                    <span id="error-text"></span>
+                    <button onclick="document.getElementById('error-banner').classList.add('hidden')">✕</button>
+                </div>
+            </section>
+
+            <section class="output-section glass-panel">
+                <h2>2. Comic Output</h2>
+                
+                <div id="loading-state" class="hidden">
+                    <div class="spinner"></div>
+                    <p id="loading-text">Initializing AI pipeline...</p>
+                    <div class="progress-steps" id="progress-steps">
+                        <span id="step-llm" class="step">📖 Extracting Scenes</span>
+                        <!-- Panel steps are injected dynamically by script.js -->
+                        <span id="step-assemble" class="step">📄 Assembling</span>
+                    </div>
+                </div>
+
+                <div id="results-state" class="hidden">
+                    <h3>Final Comic Page</h3>
+                    <img id="final-comic-img" src="" alt="Final Comic Page">
+                    
+                    <h3>Individual Panels</h3>
+                    <div id="panels-grid" class="panels-grid"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
