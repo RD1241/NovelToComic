@@ -1,12 +1,13 @@
 # NovelToComic - One-Click Startup Script
 # Usage: .\start_server.ps1
 #
-# This script:
+# Steps:
 #   1. Kills ALL Ollama processes (server + tray app)
-#   2. Starts ollama serve directly so OLLAMA_MODELS is correctly inherited
+#   2. Starts ollama serve so OLLAMA_MODELS is correctly inherited
 #   3. Verifies llama3 is visible
 #   4. Checks all HuggingFace models on D drive
-#   5. Launches the FastAPI server
+#   5. Frees port 8000 if a stale process is holding it
+#   6. Launches the FastAPI server
 
 $OLLAMA_MODEL_PATH = "D:\AI_Models\Ollama"
 $LLM_MODEL        = "llama3"
@@ -19,7 +20,7 @@ $env:HF_HOME               = "D:\AI_Models\HuggingFace"
 $env:HF_HUB_CACHE          = "D:\AI_Models\HuggingFace"
 $env:HUGGINGFACE_HUB_CACHE = "D:\AI_Models\HuggingFace"
 
-# Also persist at User level so future shells inherit it automatically
+# Persist at User level so future shells inherit it automatically
 [System.Environment]::SetEnvironmentVariable("OLLAMA_MODELS", $OLLAMA_MODEL_PATH, "User")
 
 Write-Host ""
@@ -28,9 +29,10 @@ Write-Host "OLLAMA_MODELS = $env:OLLAMA_MODELS"
 Write-Host "HF_HOME       = $env:HF_HOME"
 Write-Host ""
 
-# --- Step 1: Kill ALL Ollama processes (server + tray app) ---
-# The tray app ("ollama app") spawns ollama without OLLAMA_MODELS so we kill both.
-Write-Host "[1/4] Stopping all Ollama processes..." -ForegroundColor Yellow
+# -----------------------------------------------------------------------
+# Step 1: Kill ALL Ollama processes (server + tray app)
+# -----------------------------------------------------------------------
+Write-Host "[1/5] Stopping all Ollama processes..." -ForegroundColor Yellow
 $killed = 0
 Get-Process | Where-Object { $_.Name -like "*ollama*" } | ForEach-Object {
     Write-Host "      Killing: $($_.Name) (PID $($_.Id))"
@@ -42,16 +44,38 @@ if ($killed -eq 0) {
 }
 Start-Sleep -Seconds 3
 
-# --- Step 2: Start ollama serve directly from this shell ---
-# This inherits OLLAMA_MODELS = D:\AI_Models\Ollama correctly.
-Write-Host "[2/4] Starting ollama serve with OLLAMA_MODELS=$OLLAMA_MODEL_PATH ..." -ForegroundColor Yellow
-Start-Process -FilePath "ollama" -ArgumentList "serve" -NoNewWindow -PassThru | Out-Null
-Start-Sleep -Seconds 6
+# -----------------------------------------------------------------------
+# Step 2: Start ollama serve — truly detached via Start-Process
+# -----------------------------------------------------------------------
+Write-Host "[2/5] Starting ollama serve with OLLAMA_MODELS=$OLLAMA_MODEL_PATH ..." -ForegroundColor Yellow
 
-# --- Step 3: Verify llama3 is visible ---
-# BUG FIX: Use Out-String to get a single string so -match works as a boolean.
-# If you use an array, PowerShell -notmatch returns filtered elements, not a bool.
-Write-Host "[3/4] Checking LLM model ($LLM_MODEL)..." -ForegroundColor Yellow
+# $env:OLLAMA_MODELS is already set above; Start-Process inherits it.
+# -WindowStyle Hidden uses Windows CreateProcess which creates a fully
+# independent process that survives the parent PowerShell session.
+Start-Process -FilePath "ollama" -ArgumentList "serve" -WindowStyle Hidden
+
+# Probe until port 11434 responds (max 30 s)
+$ready = $false
+for ($i = 0; $i -lt 30; $i++) {
+    Start-Sleep -Seconds 1
+    try {
+        Invoke-WebRequest -Uri "http://127.0.0.1:11434/" -Method HEAD -TimeoutSec 1 -UseBasicParsing -ErrorAction Stop | Out-Null
+        Write-Host "      Ollama ready after $($i+1)s." -ForegroundColor Green
+        $ready = $true
+        break
+    } catch { }
+}
+if (-not $ready) {
+    Write-Host "  ERROR: Ollama did not start in 30s." -ForegroundColor Red
+    exit 1
+}
+
+
+
+# -----------------------------------------------------------------------
+# Step 3: Verify llama3 is visible
+# -----------------------------------------------------------------------
+Write-Host "[3/5] Checking LLM model ($LLM_MODEL)..." -ForegroundColor Yellow
 $modelList = (ollama list 2>&1) | Out-String
 Write-Host $modelList.Trim()
 
@@ -68,12 +92,35 @@ if ($modelList -notmatch $LLM_MODEL) {
 }
 Write-Host "  llama3 OK" -ForegroundColor Green
 
-# --- Step 4: Check HuggingFace models on D drive ---
+# -----------------------------------------------------------------------
+# Step 4: Check HuggingFace models on D drive
+# -----------------------------------------------------------------------
 Write-Host ""
-Write-Host "[4/4] Checking HuggingFace models on D drive..." -ForegroundColor Yellow
+Write-Host "[4/5] Checking HuggingFace models on D drive..." -ForegroundColor Yellow
 & $VENV_PYTHON check_models.py
 
-# --- Launch FastAPI server ---
+# -----------------------------------------------------------------------
+# Step 5: Free port 8000 if a stale process is holding it
+# -----------------------------------------------------------------------
+Write-Host ""
+Write-Host "[5/5] Checking if port 8000 is already in use..." -ForegroundColor Yellow
+
+$netstatOutput = netstat -ano | Select-String "127.0.0.1:8000\s"
+if ($netstatOutput) {
+    $portPid = ($netstatOutput | ForEach-Object { ($_ -split '\s+')[-1] } | Select-Object -First 1).Trim()
+    if ($portPid -match '^\d+$') {
+        Write-Host "      Port 8000 held by PID $portPid - killing it..." -ForegroundColor Red
+        Stop-Process -Id ([int]$portPid) -Force -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 2
+        Write-Host "      Port 8000 freed." -ForegroundColor Green
+    }
+} else {
+    Write-Host "      Port 8000 is free." -ForegroundColor Green
+}
+
+# -----------------------------------------------------------------------
+# Launch FastAPI server
+# -----------------------------------------------------------------------
 Write-Host ""
 Write-Host ">>> Starting FastAPI server at http://127.0.0.1:8000" -ForegroundColor Green
 Write-Host "    Press Ctrl+C to stop BOTH the server and Ollama." -ForegroundColor Gray
@@ -84,12 +131,12 @@ try {
 } finally {
     Write-Host ""
     Write-Host ">>> Stopping NovelToComic and cleaning up..." -ForegroundColor Yellow
-    
-    # Kill Ollama when the app stops so it doesn't stay in the background
+
+    # Kill Ollama when the app stops so it does not stay in the background
     Get-Process | Where-Object { $_.Name -like "*ollama*" } | ForEach-Object {
         Write-Host "      Stopping: $($_.Name) (PID $($_.Id))"
         Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
     }
-    
+
     Write-Host ">>> Cleanup complete. Goodbye!" -ForegroundColor Green
 }

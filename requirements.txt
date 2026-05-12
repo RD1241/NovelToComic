@@ -10,5 +10,6 @@ torchvision
 pillow
 opencv-python
 ollama
+httpx
 python-multipart
 controlnet-aux>=0.0.7
