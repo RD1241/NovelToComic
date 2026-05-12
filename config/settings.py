@@ -12,9 +12,14 @@ os.environ["HF_HUB_CACHE"]          = HF_HOME   # ensure both vars point to D dr
 os.environ["HUGGINGFACE_HUB_CACHE"] = HF_HOME
 HF_TOKEN = os.environ.get("HF_TOKEN", None)
 
+# --- OLLAMA PATH (must be set before any ollama import) ---
+OLLAMA_MODELS_PATH = "D:\\AI_Models\\Ollama"
+os.environ["OLLAMA_MODELS"] = OLLAMA_MODELS_PATH
+
 # --- LLM SETTINGS (Ollama) ---
-LLM_MODEL = "llama3"
-LLM_KEEP_ALIVE = 0 # 0 immediately drops the LLM from VRAM after use
+LLM_MODEL      = "llama3"
+OLLAMA_HOST    = os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434")
+LLM_KEEP_ALIVE = "15s"  # Keep alive briefly for retries, then drop from VRAM for SD
 
 # --- STABLE DIFFUSION SETTINGS ---
 SD_MODEL_ID = "Lykon/dreamshaper-8"
